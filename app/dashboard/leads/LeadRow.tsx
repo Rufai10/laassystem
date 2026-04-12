@@ -17,12 +17,16 @@ import {
 export interface LeadRecord {
   id: string
   name: string
+  email: string
   phone: string
+  company?: string
   source: string
   status: string
-  budget: string
+  budget: string // Keep for UI, but backend uses 'value'
+  value?: number
   assignedTo: string
   lastContact: string
+  notes?: string
 }
 
 interface LeadRowProps {

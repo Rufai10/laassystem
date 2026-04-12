@@ -2,11 +2,13 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, UserPlus, Mail, Phone, MapPin, Briefcase, Loader2, ShieldCheck } from "lucide-react"
+import { X, UserPlus, Mail, Phone, MapPin, Briefcase, Loader2, ShieldCheck, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { TeamMember, SystemRole, ROLE_PRESETS } from "@/components/team"
+import { registerUser } from "@/lib/api"
+import { toast } from "sonner"
 
 interface AddMemberModalProps {
   open: boolean
@@ -18,6 +20,7 @@ export function AddMemberModal({ open, onClose, onAdd }: AddMemberModalProps) {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    password: "", // Required for registration
     phone: "",
     location: "Mogadishu",
     role: "", // Professional title (e.g. Sales Executive)
@@ -27,32 +30,48 @@ export function AddMemberModal({ open, onClose, onAdd }: AddMemberModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.name || !form.email) return
-
-    setLoading(true)
-    await new Promise((r) => setTimeout(r, 800))
-    
-    const initials = form.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
-    
-    const newMember: TeamMember = {
-      id: Math.floor(Math.random() * 10000),
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-      location: form.location,
-      role: form.role || (form.systemRole === "Admin" ? "Administrator" : "Sales Representative"),
-      systemRole: form.systemRole,
-      status: "Active",
-      projects: 0,
-      joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-      avatar: initials || "U",
-      permissions: { ...ROLE_PRESETS[form.systemRole] },
+    if (!form.name || !form.email || !form.password) {
+      toast.error("Name, Email, and Password are required")
+      return
     }
 
-    onAdd(newMember)
-    setLoading(false)
-    setForm({ name: "", email: "", phone: "", location: "Mogadishu", role: "", systemRole: "Sales" })
-    onClose()
+    setLoading(true)
+    try {
+      // 1. Register user in database
+      const userData = {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.systemRole.toLowerCase(),
+      }
+
+      const createdUser = await registerUser(userData)
+      
+      // 2. Map to UI TeamMember type
+      const newMember: TeamMember = {
+        id: createdUser.id,
+        name: createdUser.name,
+        email: createdUser.email,
+        phone: form.phone,
+        location: form.location,
+        role: form.role || (form.systemRole === "Admin" ? "Administrator" : "Sales Representative"),
+        systemRole: form.systemRole,
+        status: "Active",
+        projects: 0,
+        joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${form.name}`,
+        permissions: { ...ROLE_PRESETS[form.systemRole] },
+      }
+
+      onAdd(newMember)
+      toast.success("Team member registered in database!")
+      setLoading(false)
+      setForm({ name: "", email: "", password: "", phone: "", location: "Mogadishu", role: "", systemRole: "Sales" })
+      onClose()
+    } catch (error: any) {
+      toast.error(error.message || "Failed to register team member")
+      setLoading(false)
+    }
   }
 
   return (
@@ -131,6 +150,21 @@ export function AddMemberModal({ open, onClose, onAdd }: AddMemberModalProps) {
                           onChange={e => setForm({...form, phone: e.target.value})}
                         />
                       </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-wider">Set Initial Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                      <Input 
+                        type="password"
+                        placeholder="••••••••" 
+                        className="pl-10 h-11 rounded-xl"
+                        value={form.password}
+                        onChange={e => setForm({...form, password: e.target.value})}
+                        required
+                      />
                     </div>
                   </div>
 

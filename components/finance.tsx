@@ -16,79 +16,10 @@ import {
   MoreHorizontal
 } from "lucide-react"
 
-const financialStats = [
-  {
-    title: "Total Revenue",
-    value: "$1,245,000",
-    change: "+12.5%",
-    trend: "up",
-    icon: DollarSign,
-    color: "text-emerald-500",
-    bg: "bg-emerald-500/10"
-  },
-  {
-    title: "Project Expenses",
-    value: "$432,000",
-    change: "+4.2%",
-    trend: "up",
-    icon: CreditCard,
-    color: "text-rose-500",
-    bg: "bg-rose-500/10"
-  },
-  {
-    title: "Net Profit",
-    value: "$813,000",
-    change: "+18.3%",
-    trend: "up",
-    icon: TrendingUp,
-    color: "text-blue-500",
-    bg: "bg-blue-500/10"
-  },
-  {
-    title: "Outstanding",
-    value: "$124,500",
-    change: "-5.4%",
-    trend: "down",
-    icon: Clock,
-    color: "text-orange-500",
-    bg: "bg-orange-500/10"
-  }
-]
+const financialStats: any[] = []
 
-export const recentInvoices = [
-  {
-    id: "INV-2024-001",
-    client: "Hassan Group",
-    project: "Modern Villa Design",
-    amount: "$45,000",
-    status: "Paid",
-    date: "Apr 10, 2026"
-  },
-  {
-    id: "INV-2024-002",
-    client: "Star Tech",
-    project: "Office Renovation",
-    amount: "$12,500",
-    status: "Pending",
-    date: "Apr 08, 2026"
-  },
-  {
-    id: "INV-2024-003",
-    client: "Som Real Estate",
-    project: "Luxury Apartment Sale",
-    amount: "$85,000",
-    status: "Paid",
-    date: "Apr 05, 2026"
-  },
-  {
-    id: "INV-2024-004",
-    client: "Global Logistics",
-    project: "Warehouse Design",
-    amount: "$32,000",
-    status: "Overdue",
-    date: "Mar 28, 2026"
-  }
-]
+export const recentInvoices: any[] = []
+
 
 export function Finance() {
   return (

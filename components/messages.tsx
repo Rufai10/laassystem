@@ -24,34 +24,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 
 // --- Mock Data ---
-const recentMessages = [
-  {
-    id: 1,
-    type: "Email",
-    recipient: "mohamed.omar@example.com",
-    subject: "Villa Project Update",
-    preview: "The architectural drawings are now ready for your review...",
-    date: "2026-04-11 10:45 AM",
-    status: "Sent"
-  },
-  {
-    id: 2,
-    type: "SMS",
-    recipient: "+252 61 555 0191",
-    preview: "Reminder: Site visit scheduled for tomorrow at 9:00 AM.",
-    date: "2026-04-10 03:20 PM",
-    status: "Delivered"
-  },
-  {
-    id: 3,
-    type: "Email",
-    recipient: "samira.warsame@laas.so",
-    subject: "Invoice #4402",
-    preview: "Please find attached the invoice for the preliminary structural...",
-    date: "2026-04-09 11:15 AM",
-    status: "Sent"
-  }
-]
+const recentMessages: any[] = []
 
 export function Messages() {
   const [loading, setLoading] = useState(false)
@@ -62,8 +35,8 @@ export function Messages() {
     // Simulate API call
     setTimeout(() => {
       setLoading(false)
-      toast.success(`${type} fariintiisii waa la diray!`, {
-        description: `Fariintaada waa loo gudbiyay macmiilka si guul leh.`,
+      toast.success(`${type} message has been sent!`, {
+        description: `Your message has been successfully delivered to the client.`,
       })
     }, 1500)
   }
@@ -105,7 +78,7 @@ export function Messages() {
                         <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input 
                           id="email-recipient" 
-                          placeholder="macmiil@laas.so" 
+                          placeholder="client@laas.com" 
                           className="h-12 pl-11 rounded-xl bg-muted/30 border-border focus-visible:ring-primary/20"
                         />
                       </div>
@@ -116,7 +89,7 @@ export function Messages() {
                         <Type className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input 
                           id="email-subject" 
-                          placeholder="Guryaha cusub ee LAAS" 
+                          placeholder="New LAAS properties" 
                           className="h-12 pl-11 rounded-xl bg-muted/30 border-border focus-visible:ring-primary/20"
                         />
                       </div>
@@ -125,7 +98,7 @@ export function Messages() {
                       <Label htmlFor="email-message" className="text-sm font-semibold ml-1">Message Content</Label>
                       <Textarea 
                         id="email-message" 
-                        placeholder="Halkan ku qor fariintaada emailka..." 
+                        placeholder="Type your email message here..." 
                         className="min-h-[160px] rounded-xl bg-muted/30 border-border p-4 focus-visible:ring-primary/20 resize-none"
                       />
                     </div>
@@ -139,7 +112,7 @@ export function Messages() {
                       {loading ? (
                         <div className="flex items-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                          Dirista fariinta...
+                          Sending message...
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -159,7 +132,7 @@ export function Messages() {
                         <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input 
                           id="sms-recipient" 
-                          placeholder="+252 61 XXX XXXX" 
+                          placeholder="+1 234 567 8900" 
                           className="h-12 pl-11 rounded-xl bg-muted/30 border-border focus-visible:ring-primary/20"
                         />
                       </div>
@@ -168,7 +141,7 @@ export function Messages() {
                       <Label htmlFor="sms-message" className="text-sm font-semibold ml-1">SMS Message</Label>
                       <Textarea 
                         id="sms-message" 
-                        placeholder="Halkan ku qor fariintaada SMS-ka..." 
+                        placeholder="Type your SMS message here..." 
                         className="min-h-[160px] rounded-xl bg-muted/30 border-border p-4 focus-visible:ring-primary/20 resize-none"
                       />
                     </div>
@@ -182,7 +155,7 @@ export function Messages() {
                       {loading ? (
                         <div className="flex items-center gap-2">
                           <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                          Dirista fariinta...
+                          Sending message...
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">

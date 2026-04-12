@@ -10,9 +10,10 @@ interface LeadTableProps {
   page: number
   totalPages: number
   onPageChange: (page: number) => void
+  onAddClick: () => void
 }
 
-export function LeadTable({ leads, page, totalPages, onPageChange }: LeadTableProps) {
+export function LeadTable({ leads, page, totalPages, onPageChange, onAddClick }: LeadTableProps) {
   if (!leads.length) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card p-12 text-center shadow-sm">
@@ -23,7 +24,7 @@ export function LeadTable({ leads, page, totalPages, onPageChange }: LeadTablePr
         <p className="mt-2 max-w-xs text-muted-foreground">
           We couldn't find any leads matching your current filters. Try adjusting your search or add a new lead.
         </p>
-        <Button size="lg" className="mt-8 rounded-xl px-8 shadow-lg">
+        <Button size="lg" className="mt-8 rounded-xl px-8 shadow-lg" onClick={onAddClick}>
           Add New Lead
         </Button>
       </div>

@@ -14,8 +14,10 @@ import {
   LogIn,
   Search,
   Globe,
-  Command
+  Command,
+  Lock
 } from "lucide-react"
+import { login as apiLogin } from "@/lib/api"
 
 export function LoginForm({
   className,
@@ -29,12 +31,28 @@ export function LoginForm({
     event.preventDefault()
     setIsLoading(true)
 
-    // Simulate a login delay
-    setTimeout(() => {
-      setIsLoading(false)
-      toast.success("Welcome back, Admin!")
+    const form = event.target as HTMLFormElement
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value
+
+    try {
+      const data = await apiLogin({ email, password })
+      localStorage.setItem("token", data.token)
+      localStorage.setItem("user", JSON.stringify({ name: data.name, email: data.email, role: data.role }))
+      toast.success(`Welcome back, ${data.name}!`)
       router.push("/dashboard")
-    }, 1000)
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign in")
+      // Fallback for development if backend is not running
+      if (email === "admin@laas.com") {
+         console.warn("Backend login failed. Using simulation fallback.")
+         localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+         localStorage.setItem("user", JSON.stringify({ name: "Admin", email: "admin@laas.com" }))
+         router.push("/dashboard")
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

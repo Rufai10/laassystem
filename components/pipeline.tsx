@@ -47,22 +47,17 @@ interface Column {
 }
 
 // --- Initial Data ---
-export const initialDeals: Deal[] = [
-  { id: "1", title: "Modern Villa Design", company: "Hassan Group", amount: "$450,000", dueDate: "Apr 25", owner: "Eng. Ali", priority: "High", columnId: "new" },
-  { id: "2", title: "Office Renovation", company: "Star Tech", amount: "$85,000", dueDate: "May 2", owner: "Arch. Amal", priority: "Medium", columnId: "new" },
-  { id: "3", title: "Luxury Apartment Sale", company: "Som Real Estate", amount: "$230,000", dueDate: "Apr 20", owner: "Eng. Ali", priority: "High", columnId: "contacted" },
-  { id: "4", title: "Warehouse Design", company: "Global Logistics", amount: "$120,000", dueDate: "Jun 10", owner: "Arch. Omar", priority: "Low", columnId: "proposal" },
-  { id: "5", title: "Residential Complex", company: "Civic Engineering", amount: "$3.5M", dueDate: "Dec 30", owner: "Eng. Ali", priority: "High", columnId: "negotiation" },
-  { id: "6", title: "School Extension", company: "City Council", amount: "$560,000", dueDate: "Jun 15", owner: "Arch. Amal", priority: "Medium", columnId: "closed" },
-]
+export const initialDeals: Deal[] = []
+
 
 
 const COLUMNS: { id: string; title: string }[] = [
-  { id: "new", title: "New Lead" },
-  { id: "contacted", title: "Contacted" },
-  { id: "proposal", title: "Proposal" },
-  { id: "negotiation", title: "Negotiation" },
-  { id: "closed", title: "Closed" },
+  { id: "New", title: "New Lead" },
+  { id: "Contacting", title: "Contacted" },
+  { id: "Qualified", title: "Qualified" },
+  { id: "Proposal", title: "Proposal" },
+  { id: "Negotiation", title: "Negotiation" },
+  { id: "Closed Won", title: "Closed Won" },
 ]
 
 // --- Components ---
@@ -187,9 +182,10 @@ function PipelineColumn({ column, deals }: { column: { id: string; title: string
 interface PipelineProps {
   deals: Deal[]
   onDealsChange: (deals: Deal[]) => void
+  onStatusChange?: (id: string, newStatus: string) => void
 }
 
-export function Pipeline({ deals, onDealsChange }: PipelineProps) {
+export function Pipeline({ deals, onDealsChange, onStatusChange }: PipelineProps) {
   const [activeDeal, setActiveDeal] = useState<Deal | null>(null)
 
   const sensors = useSensors(
@@ -230,8 +226,14 @@ export function Pipeline({ deals, onDealsChange }: PipelineProps) {
 
       if (deals[activeIndex].columnId !== deals[overIndex].columnId) {
         const newDeals = [...deals]
-        newDeals[activeIndex].columnId = deals[overIndex].columnId
+        const oldStatus = newDeals[activeIndex].columnId
+        const newStatus = deals[overIndex].columnId
+        newDeals[activeIndex].columnId = newStatus
         onDealsChange(arrayMove(newDeals, activeIndex, overIndex - 1))
+        
+        if (oldStatus !== newStatus && onStatusChange) {
+          onStatusChange(activeId as string, newStatus)
+        }
         return
       }
 
@@ -242,9 +244,18 @@ export function Pipeline({ deals, onDealsChange }: PipelineProps) {
     const isOverAColumn = over.data.current?.type === "Column"
     if (isActiveADeal && isOverAColumn) {
       const activeIndex = deals.findIndex((d) => d.id === activeId)
-      const newDeals = [...deals]
-      newDeals[activeIndex].columnId = overId as string
-      onDealsChange(arrayMove(newDeals, activeIndex, activeIndex))
+      const oldStatus = deals[activeIndex].columnId
+      const newStatus = overId as string
+      
+      if (oldStatus !== newStatus) {
+        const newDeals = [...deals]
+        newDeals[activeIndex].columnId = newStatus
+        onDealsChange(arrayMove(newDeals, activeIndex, activeIndex))
+        
+        if (onStatusChange) {
+          onStatusChange(activeId as string, newStatus)
+        }
+      }
     }
   }
 

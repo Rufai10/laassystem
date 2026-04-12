@@ -2,11 +2,13 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, UserPlus, Phone, DollarSign, Users, Globe, Loader2 } from "lucide-react"
+import { X, UserPlus, Phone, DollarSign, Users, Globe, Loader2, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { LeadRecord } from "./LeadRow"
+import { createLead } from "@/lib/api"
+import { toast } from "sonner"
 
 interface AddLeadModalProps {
   open: boolean
@@ -21,6 +23,7 @@ const AGENT_OPTIONS = ["Eng. Ali", "Arch. Amina", "Arch. Farah", "Yusuf Sales"]
 export function AddLeadModal({ open, onClose, onAdd }: AddLeadModalProps) {
   const [form, setForm] = useState({
     name: "",
+    email: "",
     phone: "",
     source: SOURCE_OPTIONS[0],
     status: STATUS_OPTIONS[0],
@@ -33,6 +36,8 @@ export function AddLeadModal({ open, onClose, onAdd }: AddLeadModalProps) {
   const validate = () => {
     const errs: Record<string, string> = {}
     if (!form.name.trim()) errs.name = "Name is required"
+    if (!form.email.trim()) errs.email = "Email is required"
+    if (!form.email.includes("@")) errs.email = "Invalid email address"
     if (!form.phone.trim()) errs.phone = "Phone is required"
     if (!form.budget.trim()) errs.budget = "Budget is required"
     return errs
@@ -46,29 +51,47 @@ export function AddLeadModal({ open, onClose, onAdd }: AddLeadModalProps) {
       return
     }
     setLoading(true)
-    // Simulate async save
-    await new Promise((r) => setTimeout(r, 800))
-    const newLead: LeadRecord = {
-      id: `L-${Math.floor(Math.random() * 9000) + 100}`,
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      source: form.source,
-      status: form.status,
-      budget: form.budget.trim().startsWith("$") ? form.budget.trim() : `$${form.budget.trim()}`,
-      assignedTo: form.assignedTo,
-      lastContact: "Today",
+    
+    try {
+      // Backend expects 'value' as a number, and 'email' which we just added
+      const leadData = {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        source: form.source,
+        status: form.status,
+        value: parseFloat(form.budget.replace(/[^0-9.]/g, "")) || 0,
+        company: "Individual", // Default or could add field
+        notes: `Budget: ${form.budget}`,
+      }
+
+      const createdLead = await createLead(leadData)
+      
+      // Map backend response back to LeadRecord UI type if needed
+      const newLead: LeadRecord = {
+        ...createdLead,
+        budget: form.budget.trim().startsWith("$") ? form.budget.trim() : `$${form.budget.trim()}`,
+        lastContact: "Just now",
+        assignedTo: form.assignedTo, // Backend returns assignedTo object, but UI expects string for now
+      }
+
+      onAdd(newLead)
+      toast.success("Lead added successfully!")
+      setForm({ name: "", email: "", phone: "", source: SOURCE_OPTIONS[0], status: STATUS_OPTIONS[0], budget: "", assignedTo: AGENT_OPTIONS[0] })
+      setErrors({})
+      onClose()
+    } catch (error: any) {
+      console.error(error)
+      toast.error(error.message || "Failed to add lead. Check if you're logged in.")
+    } finally {
+      setLoading(false)
     }
-    onAdd(newLead)
-    setLoading(false)
-    setForm({ name: "", phone: "", source: SOURCE_OPTIONS[0], status: STATUS_OPTIONS[0], budget: "", assignedTo: AGENT_OPTIONS[0] })
-    setErrors({})
-    onClose()
   }
 
   const handleClose = () => {
     if (loading) return
     setErrors({})
-    setForm({ name: "", phone: "", source: SOURCE_OPTIONS[0], status: STATUS_OPTIONS[0], budget: "", assignedTo: AGENT_OPTIONS[0] })
+    setForm({ name: "", email: "", phone: "", source: SOURCE_OPTIONS[0], status: STATUS_OPTIONS[0], budget: "", assignedTo: AGENT_OPTIONS[0] })
     onClose()
   }
 
@@ -140,6 +163,25 @@ export function AddLeadModal({ open, onClose, onAdd }: AddLeadModalProps) {
                       />
                     </div>
                     {errors.name && <p className="text-xs text-red-500">{errors.name}</p>}
+                  </div>
+
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="lead-email" className="text-sm font-semibold text-foreground">
+                      Email Address
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                      <Input
+                        id="lead-email"
+                        type="email"
+                        placeholder="e.g. mohamed@example.com"
+                        value={form.email}
+                        onChange={(e) => { setForm(f => ({ ...f, email: e.target.value })); setErrors(er => ({ ...er, email: "" })) }}
+                        className={`pl-10 h-11 rounded-xl border-border bg-background transition-all focus:ring-2 focus:ring-primary/30 ${errors.email ? "border-red-500 focus:ring-red-500/30" : ""}`}
+                      />
+                    </div>
+                    {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                   </div>
 
                   {/* Phone */}

@@ -2,14 +2,43 @@
 
 import { Team, seedMembers, type TeamMember } from "@/components/team"
 import { motion } from "framer-motion"
-import { Users, UserPlus } from "lucide-react"
+import { Users, UserPlus, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AddMemberModal } from "./AddMemberModal"
+import { fetchUsers, deleteUser } from "@/lib/api"
+import { toast } from "sonner"
 
 export default function TeamPage() {
-  const [members, setMembers] = useState<TeamMember[]>(seedMembers)
+  const [members, setMembers] = useState<TeamMember[]>([])
+  const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        setLoading(true)
+        const data = await fetchUsers()
+        const mappedMembers: TeamMember[] = data.map((u: any) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          role: u.role,
+          status: u.status || "offline",
+          avatar: u.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.name}`,
+          lastActive: u.lastActive ? new Date(u.lastActive).toLocaleDateString() : "Never",
+        }))
+        setMembers(mappedMembers)
+      } catch (error) {
+        console.error(error)
+        setMembers(seedMembers)
+        toast.error("Connected to local simulation. Real database fetch failed.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    getUsers()
+  }, [])
 
   const handleAddMember = (newMember: TeamMember) => {
     setMembers(prev => [newMember, ...prev])
@@ -17,10 +46,17 @@ export default function TeamPage() {
 
   const handleSaveMember = (updated: TeamMember) => {
     setMembers(prev => prev.map(m => m.id === updated.id ? updated : m))
+    toast.info("Profile update saved (local session).")
   }
 
-  const handleRemoveMember = (id: number) => {
-    setMembers(prev => prev.filter(m => m.id !== id))
+  const handleRemoveMember = async (id: string | number) => {
+    try {
+      await deleteUser(id.toString())
+      setMembers(prev => prev.filter(m => m.id !== id))
+      toast.success("Member removed from database")
+    } catch (error: any) {
+      toast.error(error.message || "Failed to remove member")
+    }
   }
 
   return (
@@ -61,11 +97,17 @@ export default function TeamPage() {
         transition={{ delay: 0.2 }}
         className="flex-1"
       >
-        <Team 
-          members={members} 
-          onSave={handleSaveMember} 
-          onRemove={handleRemoveMember} 
-        />
+        {loading ? (
+          <div className="flex h-[400px] w-full items-center justify-center">
+            <Loader2 className="size-10 animate-spin text-primary" />
+          </div>
+        ) : (
+          <Team 
+            members={members} 
+            onSave={handleSaveMember} 
+            onRemove={handleRemoveMember} 
+          />
+        )}
       </motion.div>
 
       <AddMemberModal 

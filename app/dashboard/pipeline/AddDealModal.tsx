@@ -2,11 +2,13 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, LayoutGrid, DollarSign, Calendar, User, Building2, Loader2, ShieldCheck } from "lucide-react"
+import { X, LayoutGrid, DollarSign, Calendar, User, Building2, Loader2, ShieldCheck, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Deal } from "@/components/pipeline"
+import { createLead } from "@/lib/api"
+import { toast } from "sonner"
 
 interface AddDealModalProps {
   open: boolean
@@ -19,6 +21,7 @@ const AGENT_OPTIONS = ["Eng. Ali", "Arch. Amal", "Arch. Omar", "Yusuf Sales"]
 export function AddDealModal({ open, onClose, onAdd }: AddDealModalProps) {
   const [form, setForm] = useState({
     title: "",
+    email: "", // Required by backend
     company: "",
     amount: "",
     dueDate: "",
@@ -29,26 +32,45 @@ export function AddDealModal({ open, onClose, onAdd }: AddDealModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.title || !form.amount) return
-
-    setLoading(true)
-    await new Promise((r) => setTimeout(r, 800))
-    
-    const newDeal: Deal = {
-      id: Math.floor(Math.random() * 10000).toString(),
-      title: form.title,
-      company: form.company,
-      amount: form.amount.startsWith("$") ? form.amount : `$${form.amount}`,
-      dueDate: form.dueDate || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      owner: form.owner,
-      priority: form.priority,
-      columnId: "new",
+    if (!form.title || !form.amount || !form.email) {
+      toast.error("Please fill in required fields (Title, Amount, Email)")
+      return
     }
 
-    onAdd(newDeal)
-    setLoading(false)
-    setForm({ title: "", company: "", amount: "", dueDate: "", owner: AGENT_OPTIONS[0], priority: "Medium" })
-    onClose()
+    setLoading(true)
+    try {
+      const leadData = {
+        name: form.title,
+        email: form.email,
+        phone: "N/A", // Default
+        company: form.company || "Individual",
+        status: "New",
+        value: parseFloat(form.amount.replace(/[^0-9.]/g, "")) || 0,
+        notes: `Pipeline Deal. Priority: ${form.priority}`,
+      }
+
+      const createdLead = await createLead(leadData)
+      
+      const newDeal: Deal = {
+        id: createdLead.id,
+        title: createdLead.name,
+        company: createdLead.company,
+        amount: form.amount.startsWith("$") ? form.amount : `$${form.amount}`,
+        dueDate: form.dueDate || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        owner: form.owner,
+        priority: form.priority,
+        columnId: "New",
+      }
+
+      onAdd(newDeal)
+      toast.success("Deal created in database!")
+      setForm({ title: "", email: "", company: "", amount: "", dueDate: "", owner: AGENT_OPTIONS[0], priority: "Medium" })
+      onClose()
+    } catch (error: any) {
+      toast.error(error.message || "Failed to save deal to database")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -97,6 +119,21 @@ export function AddDealModal({ open, onClose, onAdd }: AddDealModalProps) {
                         value={form.title}
                         onChange={e => setForm({...form, title: e.target.value})}
                         required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-xs font-bold uppercase tracking-wider">Client Email (Required)</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="e.g. client@example.com" 
+                        className="pl-10 h-11 rounded-xl"
+                        value={form.email}
+                        onChange={e => setForm({...form, email: e.target.value})}
+                        required
+                        type="email"
                       />
                     </div>
                   </div>

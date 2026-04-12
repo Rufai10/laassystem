@@ -3,71 +3,83 @@ const { prisma } = require('../config/db');
 // @desc    Get all leads
 // @route   GET /api/leads
 // @access  Private
-const getLeads = async (req, res) => {
-  const leads = await prisma.lead.findMany({
-    include: {
-      assignedTo: {
-        select: {
-          name: true,
-          email: true,
+const getLeads = async (req, res, next) => {
+  try {
+    const leads = await prisma.lead.findMany({
+      include: {
+        assignedTo: {
+          select: {
+            name: true,
+            email: true,
+          },
         },
       },
-    },
-  });
-  res.json(leads);
+    });
+    res.json(leads);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Get single lead
 // @route   GET /api/leads/:id
 // @access  Private
-const getLeadById = async (req, res) => {
-  const lead = await prisma.lead.findUnique({
-    where: { id: req.params.id },
-    include: {
-      assignedTo: {
-        select: {
-          name: true,
-          email: true,
+const getLeadById = async (req, res, next) => {
+  try {
+    const lead = await prisma.lead.findUnique({
+      where: { id: req.params.id },
+      include: {
+        assignedTo: {
+          select: {
+            name: true,
+            email: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (lead) {
-    res.json(lead);
-  } else {
-    res.status(404);
-    throw new Error('Lead not found');
+    if (lead) {
+      res.json(lead);
+    } else {
+      res.status(404);
+      throw new Error('Lead not found');
+    }
+  } catch (error) {
+    next(error);
   }
 };
 
 // @desc    Create a lead
 // @route   POST /api/leads
 // @access  Private
-const createLead = async (req, res) => {
-  const { name, email, phone, company, status, source, value, notes } = req.body;
+const createLead = async (req, res, next) => {
+  try {
+    const { name, email, phone, company, status, source, value, notes } = req.body;
 
-  const lead = await prisma.lead.create({
-    data: {
-      name,
-      email,
-      phone,
-      company,
-      status,
-      source,
-      value: parseFloat(value) || 0,
-      notes,
-      assignedToId: req.user.id,
-    },
-  });
+    const lead = await prisma.lead.create({
+      data: {
+        name,
+        email,
+        phone,
+        company,
+        status,
+        source,
+        value: parseFloat(value) || 0,
+        notes,
+        assignedToId: req.user ? req.user.id : null,
+      },
+    });
 
-  res.status(201).json(lead);
+    res.status(201).json(lead);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @desc    Update a lead
 // @route   PUT /api/leads/:id
 // @access  Private
-const updateLead = async (req, res) => {
+const updateLead = async (req, res, next) => {
   const { name, email, phone, company, status, source, value, notes } = req.body;
 
   try {
@@ -86,23 +98,21 @@ const updateLead = async (req, res) => {
     });
     res.json(updatedLead);
   } catch (error) {
-    res.status(404);
-    throw new Error('Lead not found');
+    next(error);
   }
 };
 
 // @desc    Delete a lead
 // @route   DELETE /api/leads/:id
 // @access  Private/Admin
-const deleteLead = async (req, res) => {
+const deleteLead = async (req, res, next) => {
   try {
     await prisma.lead.delete({
       where: { id: req.params.id },
     });
     res.json({ message: 'Lead removed' });
   } catch (error) {
-    res.status(404);
-    throw new Error('Lead not found');
+    next(error);
   }
 };
 

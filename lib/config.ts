@@ -19,27 +19,24 @@ import {
 } from "lucide-react"
 
 export const siteConfig = {
-  name: "Ayub Abdullahi", 
+  name: "LAAS Dashboard", 
   description: "A professional dashboard system for all your applications.",
 }
 
 export const dashboardNav = {
   user: {
     name: "Admin User",
-    email: "[EMAIL_ADDRESS]",
+    email: "admin@example.com",
     avatar: "/avatars/admin.jpg",
   },
 
-  //  Navigationka kore 
-
+  // Main Navigation
   mainNav: [
     {
       title: "Dashboard",
       href: "/dashboard",
       icon: LayoutDashboard,
     },
-    
-    
     {
       title: "Leads",
       href: "/dashboard/leads",
@@ -72,43 +69,42 @@ export const dashboardNav = {
     },
   ],
 
+  // Secondary Navigation
+  secondaryNav: [
+    {
+      title: "Settings",
+      href: "/dashboard/settings",
+      icon: Settings,
+    },
+    {
+      title: "Get Help",
+      href: "/dashboard/help",
+      icon: HelpCircle,
+    },
+    {
+      title: "Search",
+      href: "/dashboard/search",
+      icon: Search,
+    },
+  ],
 
-//   //  Navigationka hoose 
-//   secondaryNav: [
-//     {
-//       title: "Settings",
-//       href: "/dashboard/settings",
-//       icon: Settings,
-//     },
-//     {
-//       title: "Get Help",
-//       href: "/dashboard/help",
-//       icon: HelpCircle,
-//     },
-//     {
-//       title: "Search",
-//       href: "/dashboard/search",
-//       icon: Search,
-//     },
-//   ],
-
-//   //  Navigationka hoose 
-//   documentsNav: [
-//     {
-//       name: "Data Library",
-//       url: "/dashboard/data",
-//       icon: Database,
-//     },
-//     {
-//       name: "Reports",
-//       url: "/dashboard/reports",
-//       icon: Files,
-//     },
-//     {
-//       name: "Proposals",
-//       url: "/dashboard/proposals",
-//       icon: FileText,
-//     },
-//   ],
-// }
+  // Documents Navigation
+  documentsNav: [
+    {
+      name: "Data Library",
+      url: "/dashboard/data",
+      icon: Database,
+    },
+    {
+      name: "Reports",
+      url: "/dashboard/reports",
+      icon: Files,
+    },
+    {
+      name: "Proposals",
+      url: "/dashboard/proposals",
+      icon: FileText,
+    },
+  ],
 }
+

@@ -39,7 +39,7 @@ import { useLanguage } from "@/components/language-provider"
 
 export function SiteHeader() {
   const user = dashboardNav.user
-  const { locale, setLocale, t } = useLanguage()
+  const { t } = useLanguage()
 
   const [isFullscreen, setIsFullscreen] = React.useState(false)
 
@@ -92,31 +92,7 @@ export function SiteHeader() {
         {/* Right side icons */}
         <ModeToggle />
         
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="hidden sm:flex text-muted-foreground hover:text-foreground">
-              <Globe className="size-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40 rounded-xl">
-            <DropdownMenuItem 
-              className={locale === "en" ? "bg-muted font-bold text-primary" : "cursor-pointer"}
-              onClick={() => setLocale("en")}
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🇺🇸</span> English
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className={locale === "so" ? "bg-muted font-bold text-primary" : "cursor-pointer"}
-              onClick={() => setLocale("so")}
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🇸🇴</span> Somali
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
         
         <Button 
           variant="ghost" 

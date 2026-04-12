@@ -1,19 +1,22 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus, Users, Target, CheckCircle2, PhoneCall, Home, Building2 } from "lucide-react"
+import { Plus, Users, Target, CheckCircle2, PhoneCall, Home, Building2, Loader2 } from "lucide-react"
 import { LeadFilters } from "./LeadFilters"
 import { LeadTable } from "./LeadTable"
 import { AddLeadModal } from "./AddLeadModal"
 import { motion, AnimatePresence } from "framer-motion"
 import type { LeadRecord } from "./LeadRow"
 import { useLanguage } from "@/components/language-provider"
+import { fetchLeads } from "@/lib/api"
+import { toast } from "sonner"
 
 const mockLeads: LeadRecord[] = [
   {
     id: "L-101",
     name: "Mohamed Omar",
+    email: "m.omar@example.com",
     phone: "+252 61 5550191",
     source: "Website",
     status: "New",
@@ -24,6 +27,7 @@ const mockLeads: LeadRecord[] = [
   {
     id: "L-102",
     name: "Samira Warsame",
+    email: "s.warsame@example.com",
     phone: "+252 61 5550137",
     source: "Referral",
     status: "Contacted",
@@ -34,6 +38,7 @@ const mockLeads: LeadRecord[] = [
   {
     id: "L-103",
     name: "Abdi Hassan",
+    email: "a.hassan@example.com",
     phone: "+252 61 5550184",
     source: "Property Portal",
     status: "Proposal",
@@ -44,6 +49,7 @@ const mockLeads: LeadRecord[] = [
   {
     id: "L-104",
     name: "Nadia Isse",
+    email: "n.isse@example.com",
     phone: "+252 61 5550168",
     source: "Facebook Ads",
     status: "Closed",
@@ -54,6 +60,7 @@ const mockLeads: LeadRecord[] = [
   {
     id: "L-105",
     name: "Ahmed Ibrahim",
+    email: "a.ibrahim@example.com",
     phone: "+252 61 5550144",
     source: "Website",
     status: "Lost",
@@ -64,6 +71,7 @@ const mockLeads: LeadRecord[] = [
   {
     id: "L-106",
     name: "Fatima Noor",
+    email: "f.noor@example.com",
     phone: "+252 61 5550170",
     source: "Referral",
     status: "Contacted",
@@ -74,6 +82,7 @@ const mockLeads: LeadRecord[] = [
   {
     id: "L-107",
     name: "Ibrahim Aden",
+    email: "i.aden@example.com",
     phone: "+252 61 5550155",
     source: "Email Inquiry",
     status: "Proposal",
@@ -84,6 +93,7 @@ const mockLeads: LeadRecord[] = [
   {
     id: "L-108",
     name: "Asma Mohamud",
+    email: "a.mohamud@example.com",
     phone: "+252 61 5550119",
     source: "Office Visit",
     status: "New",
@@ -95,12 +105,38 @@ const mockLeads: LeadRecord[] = [
 
 export default function LeadsPage() {
   const { t } = useLanguage()
-  const [leads, setLeads] = useState<LeadRecord[]>(mockLeads)
+  const [leads, setLeads] = useState<LeadRecord[]>([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [status, setStatus] = useState("All")
   const [source, setSource] = useState("All")
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
+
+  useEffect(() => {
+    const getLeads = async () => {
+      try {
+        setLoading(true)
+        const data = await fetchLeads()
+        // Map backend data to UI format
+        const mappedData = data.map((l: any) => ({
+          ...l,
+          budget: l.value ? `$${l.value.toLocaleString()}` : "$0",
+          assignedTo: l.assignedTo?.name || "Unassigned",
+          lastContact: new Date(l.updatedAt).toLocaleDateString(),
+        }))
+        setLeads(mappedData)
+      } catch (error) {
+        console.error(error)
+        // Fallback to mock data if backend fails, for demo purposes
+        setLeads(mockLeads)
+        toast.error("Connected to local simulation. Real database fetch failed.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    getLeads()
+  }, [])
 
   const handleAddLead = (lead: LeadRecord) => {
     setLeads(prev => [lead, ...prev])
@@ -119,7 +155,7 @@ export default function LeadsPage() {
 
       return matchesSearch && matchesStatus && matchesSource
     })
-  }, [search, status, source])
+  }, [search, status, source, leads])
 
   const stats = useMemo(() => {
     return {
@@ -216,22 +252,29 @@ export default function LeadsPage() {
           }}
         />
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${status}-${source}-${search}-${page}`}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            <LeadTable 
-              leads={pagedLeads} 
-              page={currentPage} 
-              totalPages={totalPages} 
-              onPageChange={setPage} 
-            />
-          </motion.div>
-        </AnimatePresence>
+        {loading ? (
+          <div className="flex h-[400px] w-full items-center justify-center">
+            <Loader2 className="size-10 animate-spin text-primary" />
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${status}-${source}-${search}-${page}`}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <LeadTable 
+                leads={pagedLeads} 
+                page={currentPage} 
+                totalPages={totalPages} 
+                onPageChange={setPage} 
+                onAddClick={() => setModalOpen(true)}
+              />
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
 
       <AddLeadModal

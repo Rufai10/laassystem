@@ -53,7 +53,7 @@ export type Permissions = {
 }
 
 export interface TeamMember {
-  id: number
+  id: number | string
   name: string
   role: string
   systemRole: SystemRole
@@ -95,44 +95,8 @@ export const ROLE_COLORS: Record<SystemRole, string> = {
 
 // ─── Seed data ────────────────────────────────────────────────────────────────
 
-export const seedMembers: TeamMember[] = [
-  {
-    id: 1, name: "Eng. Ali Hassan", role: "Senior Civil Engineer",
-    systemRole: "Admin", email: "ali.hassan@laas.so", phone: "+252 61 550191",
-    location: "Mogadishu", status: "Active", projects: 12, joinDate: "Jan 2023",
-    avatar: "AH", permissions: { ...ROLE_PRESETS.Admin },
-  },
-  {
-    id: 2, name: "Arch. Amal Warsame", role: "Principal Architect",
-    systemRole: "Admin", email: "amal.warsame@laas.so", phone: "+252 61 550137",
-    location: "Hargeisa", status: "Active", projects: 8, joinDate: "Mar 2023",
-    avatar: "AW", permissions: { ...ROLE_PRESETS.Admin },
-  },
-  {
-    id: 3, name: "Arch. Omar Farole", role: "Interior Designer",
-    systemRole: "Sales", email: "omar.farole@laas.so", phone: "+252 61 550184",
-    location: "Mogadishu", status: "On Leave", projects: 5, joinDate: "Jun 2023",
-    avatar: "OF", permissions: { ...ROLE_PRESETS.Sales },
-  },
-  {
-    id: 4, name: "Yusuf Mohamed", role: "Sales Manager",
-    systemRole: "Sales", email: "yusuf.m@laas.so", phone: "+252 61 550168",
-    location: "Mogadishu", status: "Active", projects: 45, joinDate: "Feb 2024",
-    avatar: "YM", permissions: { ...ROLE_PRESETS.Sales },
-  },
-  {
-    id: 5, name: "Eng. Amina Isse", role: "Structural Engineer",
-    systemRole: "Admin", email: "amina.isse@laas.so", phone: "+252 61 550144",
-    location: "Garowe", status: "Active", projects: 15, joinDate: "Nov 2023",
-    avatar: "AI", permissions: { ...ROLE_PRESETS.Admin },
-  },
-  {
-    id: 6, name: "Farah Aden", role: "Project Coordinator",
-    systemRole: "Sales", email: "farah.a@laas.so", phone: "+252 61 550170",
-    location: "Mogadishu", status: "Active", projects: 20, joinDate: "May 2024",
-    avatar: "FA", permissions: { ...ROLE_PRESETS.Sales },
-  },
-]
+export const seedMembers: TeamMember[] = []
+
 
 // ─── Permission Toggle ────────────────────────────────────────────────────────
 
@@ -343,7 +307,7 @@ function MemberCard({
 }: {
   member: TeamMember
   onEdit: (m: TeamMember) => void
-  onRemove: (id: number) => void
+  onRemove: (id: number | string) => void
 }) {
   const activePerms = Object.values(member.permissions).filter(Boolean).length
 
@@ -475,7 +439,7 @@ function MemberCard({
 interface TeamProps {
   members: TeamMember[]
   onSave: (updated: TeamMember) => void
-  onRemove: (id: number) => void
+  onRemove: (id: number | string) => void
 }
 
 export function Team({ members, onSave, onRemove }: TeamProps) {

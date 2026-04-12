@@ -60,4 +60,45 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { getUserProfile, updateUserProfile };
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+const getUsers = async (req, res) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      status: true,
+      avatar: true,
+      lastActive: true,
+    },
+  });
+  res.json(users);
+};
+
+// @desc    Delete user
+// @route   DELETE /api/users/:id
+// @access  Private/Admin
+const deleteUser = async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.params.id },
+  });
+
+  if (user) {
+    if (user.role === 'admin') {
+      res.status(400);
+      throw new Error('Cannot delete admin user');
+    }
+    await prisma.user.delete({
+      where: { id: req.params.id },
+    });
+    res.json({ message: 'User removed' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+};
+
+module.exports = { getUserProfile, updateUserProfile, getUsers, deleteUser };

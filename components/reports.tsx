@@ -17,33 +17,10 @@ import {
   ChevronRight
 } from "lucide-react"
 
-export const analyticsOverview = [
-  {
-    title: "Lead Conversion",
-    value: "24.5%",
-    change: "+4.2%",
-    description: "vs last month"
-  },
-  {
-    title: "Project ROI",
-    value: "32.8%",
-    change: "+2.1%",
-    description: "Annual average"
-  },
-  {
-    title: "Team Efficiency",
-    value: "92%",
-    change: "+5.0%",
-    description: "Across all studios"
-  }
-]
+export const analyticsOverview: any[] = []
 
-export const projectDistribution = [
-  { category: "Modern Villa Design", count: 12, percentage: 40, color: "bg-primary" },
-  { category: "Residential Complex", count: 8, percentage: 25, color: "bg-blue-500" },
-  { category: "Office Renovation", count: 6, percentage: 20, color: "bg-orange-500" },
-  { category: "Public Infrastructure", count: 4, percentage: 15, color: "bg-emerald-500" },
-]
+export const projectDistribution: any[] = []
+
 
 export function Reports() {
   return (

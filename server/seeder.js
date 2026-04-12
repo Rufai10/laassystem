@@ -14,7 +14,7 @@ const importData = async () => {
     // Create users
     await prisma.user.create({
       data: {
-        name: 'Admin User',
+        name: 'Admin',
         email: 'admin@example.com',
         password,
         role: 'admin',
@@ -23,8 +23,8 @@ const importData = async () => {
 
     const manager = await prisma.user.create({
       data: {
-        name: 'Jane Doe',
-        email: 'jane@example.com',
+        name: 'Manager',
+        email: 'manager@example.com',
         password,
         role: 'manager',
       },
@@ -32,29 +32,9 @@ const importData = async () => {
 
     // Create leads
     await prisma.lead.createMany({
-      data: [
-        {
-          name: 'John Smith',
-          email: 'john@smith.com',
-          phone: '111-222-3333',
-          company: 'Smith & Co',
-          status: 'New',
-          source: 'Website',
-          value: 1000,
-          assignedToId: manager.id,
-        },
-        {
-          name: 'Alice Johnson',
-          email: 'alice@wonderland.com',
-          phone: '444-555-6666',
-          company: 'Tea Party Inc',
-          status: 'Qualified',
-          source: 'Referral',
-          value: 5000,
-          assignedToId: manager.id,
-        },
-      ],
+      data: [],
     });
+
 
     console.log('Data Imported!');
     process.exit();

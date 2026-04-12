@@ -25,8 +25,8 @@ export function SectionCards() {
   const stats = [
     {
       title: "Total Revenue",
-      value: "$1,245k",
-      trend: "+12.5%",
+      value: "$0",
+      trend: "0%",
       trendType: "up",
       description: "Annual Revenue",
       icon: DollarSign,
@@ -34,8 +34,8 @@ export function SectionCards() {
     },
     {
       title: "Active Projects",
-      value: "42",
-      trend: "+8",
+      value: "0",
+      trend: "0",
       trendType: "up",
       description: "Ongoing Construction",
       icon: Activity,
@@ -43,8 +43,8 @@ export function SectionCards() {
     },
     {
       title: "New Leads",
-      value: "156",
-      trend: "+24.2%",
+      value: "0",
+      trend: "0%",
       trendType: "up",
       description: "Qualified Inquiries",
       icon: Users,
@@ -52,8 +52,8 @@ export function SectionCards() {
     },
     {
       title: "Lead Conversion",
-      value: "24.5%",
-      trend: "+2.1%",
+      value: "0%",
+      trend: "0%",
       trendType: "up",
       description: "Lead to Contract",
       icon: BarChart3,
