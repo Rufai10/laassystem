@@ -1,0 +1,78 @@
+"use client"
+
+import { Team, seedMembers, type TeamMember } from "@/components/team"
+import { motion } from "framer-motion"
+import { Users, UserPlus } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { AddMemberModal } from "./AddMemberModal"
+
+export default function TeamPage() {
+  const [members, setMembers] = useState<TeamMember[]>(seedMembers)
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const handleAddMember = (newMember: TeamMember) => {
+    setMembers(prev => [newMember, ...prev])
+  }
+
+  const handleSaveMember = (updated: TeamMember) => {
+    setMembers(prev => prev.map(m => m.id === updated.id ? updated : m))
+  }
+
+  const handleRemoveMember = (id: number) => {
+    setMembers(prev => prev.filter(m => m.id !== id))
+  }
+
+  return (
+    <div className="flex flex-1 flex-col gap-8 bg-background/95 px-4 py-8 md:px-8 lg:px-12">
+      {/* Header Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between"
+      >
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="size-5 text-primary" />
+            <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Organization</span>
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            Team Members
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Manage your architects, engineers, and sales representative team.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button 
+            size="lg" 
+            onClick={() => setModalOpen(true)}
+            className="h-12 rounded-xl bg-primary px-6 shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+          >
+            <UserPlus className="mr-2 size-5" />
+            Invite Member
+          </Button>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2 }}
+        className="flex-1"
+      >
+        <Team 
+          members={members} 
+          onSave={handleSaveMember} 
+          onRemove={handleRemoveMember} 
+        />
+      </motion.div>
+
+      <AddMemberModal 
+        open={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+        onAdd={handleAddMember} 
+      />
+    </div>
+  )
+}

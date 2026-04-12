@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user") // admin, manager, user
+  leads     Lead[]   @relation("UserLeads")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lead {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  status      String   @default("New") // New, Contacting, Qualified, Proposal, Negotiation, Closed Won, Closed Lost
+  source      String   @default("Website")
+  value       Float    @default(0)
+  notes       String?
+  assignedTo  User?    @relation("UserLeads", fields: [assignedToId], references: [id])
+  assignedToId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
