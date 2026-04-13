@@ -28,7 +28,7 @@ export default function TeamPage() {
           email: u.email,
           role: u.role,
           status: u.status || "offline",
-          avatar: u.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.name}`,
+          avatar: u.avatar || `${process.env.NEXT_PUBLIC_AVATAR_API_URL || "https://api.dicebear.com/7.x/avataaars/svg"}?seed=${u.name}`,
           lastActive: u.lastActive ? new Date(u.lastActive).toLocaleDateString() : "Never",
         }))
         setMembers(mappedMembers)

@@ -5,7 +5,7 @@
  * Tani waxay kuu fududaynaysaa in haddii aad badeshay URL-ka Backend-ka aad hal meel ka bedesho.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // 1. Helista Finance Stats
 export async function fetchFinanceStats() {

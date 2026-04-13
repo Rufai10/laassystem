@@ -59,7 +59,7 @@ export function AddMemberModal({ open, onClose, onAdd }: AddMemberModalProps) {
         status: "Active",
         projects: 0,
         joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${form.name}`,
+        avatar: `${process.env.NEXT_PUBLIC_AVATAR_API_URL || "https://api.dicebear.com/7.x/avataaars/svg"}?seed=${form.name}`,
         permissions: { ...ROLE_PRESETS[form.systemRole] },
       }
 

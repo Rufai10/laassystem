@@ -10,12 +10,24 @@
 			"item": [
 				{
 					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"user_id\", jsonData._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Admin User\",\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\"\n}",
+							"raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test-{{$randomInt}}@example.com\",\n    \"password\": \"password123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -44,7 +56,7 @@
 							"script": {
 								"exec": [
 									"var jsonData = pm.response.json();",
-									"pm.environment.set(\"token\", jsonData.token);"
+									"pm.collectionVariables.set(\"token\", jsonData.token);"
 								],
 								"type": "text/javascript"
 							}
@@ -82,6 +94,30 @@
 			"name": "Users",
 			"item": [
 				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Profile",
 					"request": {
 						"method": "GET",
@@ -101,6 +137,65 @@
 								"api",
 								"users",
 								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Admin Updated\",\n    \"email\": \"admin@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}"
 							]
 						}
 					},
@@ -136,7 +231,69 @@
 					"response": []
 				},
 				{
+					"name": "Get Customers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/leads/customers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"leads",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lead By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/leads/{{lead_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"leads",
+								"{{lead_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Lead",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"lead_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -189,20 +346,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/leads/:id",
+							"raw": "{{base_url}}/api/leads/{{lead_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"leads",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": ""
-								}
+								"{{lead_id}}"
 							]
 						}
 					},
@@ -220,20 +371,172 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/leads/:id",
+							"raw": "{{base_url}}/api/leads/{{lead_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"leads",
-								":id"
+								"{{lead_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deals",
+			"item": [
+				{
+					"name": "Get All Deals",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/deals",
+							"host": [
+								"{{base_url}}"
 							],
-							"variable": [
-								{
-									"key": "id",
-									"value": ""
+							"path": [
+								"api",
+								"deals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Deal By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/deals/{{deal_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deals",
+								"{{deal_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Deal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"deal_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Enterprise License Deal\",\n    \"amount\": 15000,\n    \"status\": \"New\",\n    \"priority\": \"High\",\n    \"dueDate\": \"2026-12-31\",\n    \"leadId\": \"{{lead_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/deals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Deal",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"Qualified\",\n    \"priority\": \"High\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/deals/{{deal_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deals",
+								"{{deal_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Deal",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/deals/{{deal_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deals",
+								"{{deal_id}}"
 							]
 						}
 					},
@@ -272,6 +575,18 @@
 			"key": "token",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "lead_id",
+			"value": ""
+		},
+		{
+			"key": "deal_id",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
 		}
 	]
 }

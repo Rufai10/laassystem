@@ -27,11 +27,13 @@ app.get('/', (req, res) => {
 const authRoutes = require('./routes/authRoutes');
 const leadRoutes = require('./routes/leadRoutes');
 const userRoutes = require('./routes/userRoutes');
+const dealRoutes = require('./routes/dealRoutes');
 
 // Use Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/deals', dealRoutes);
 
 // Error Handling Middleware
 app.use(notFound);
