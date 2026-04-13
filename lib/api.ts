@@ -1,17 +1,17 @@
 /**
  * Central API Management
  * 
- * Sxb, halkan ku dhex qor dhamaan "Fetch Requests-ka" aad u dirayso Backend-kaaga.
- * Tani waxay kuu fududaynaysaa in haddii aad badeshay URL-ka Backend-ka aad hal meel ka bedesho.
+ * Write all your "Fetch Requests" directed to your Backend here.
+ * This makes it easy for you to change the Backend URL in one place if you change it.
  */
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-// 1. Helista Finance Stats
+// 1. Fetch Finance Stats
 export async function fetchFinanceStats() {
   try {
     const response = await fetch(`${BASE_URL}/finance/stats`);
-    if (!response.ok) throw new Error("Xogta Finance-ka waa la waayay");
+    if (!response.ok) throw new Error("Finance data not found");
     return await response.json();
   } catch (error) {
     console.error("API Error:", error);
@@ -19,7 +19,7 @@ export async function fetchFinanceStats() {
   }
 }
 
-// 2. Helista Users
+// 2. Fetch Users
 export async function fetchUsers() {
   const token = localStorage.getItem("token");
   const response = await fetch(`${BASE_URL}/users`, {
@@ -31,13 +31,13 @@ export async function fetchUsers() {
   return await response.json();
 }
 
-// 3. Helista Reports
+// 3. Fetch Reports
 export async function fetchReports() {
   const response = await fetch(`${BASE_URL}/reports`);
   return await response.json();
 }
 
-// 4. Helista Leads
+// 4. Fetch Leads
 export async function fetchLeads() {
   const token = localStorage.getItem("token");
   const response = await fetch(`${BASE_URL}/leads`, {
@@ -49,7 +49,7 @@ export async function fetchLeads() {
   return await response.json();
 }
 
-// 4.1 Helista Customers
+// 4.1 Fetch Customers
 export async function fetchCustomers() {
   const token = localStorage.getItem("token");
   const response = await fetch(`${BASE_URL}/leads/customers`, {

@@ -1,57 +1,57 @@
-# 🚀 Raadsan Dashboard System - Buugga Dhamaystiran (The Ultimate Manual)
+# 🚀 Raadsan Dashboard System - The Ultimate Manual
 
-Kani waa hage heer sare ah (Expert Guide) oo loogu talagalay in lagu fahmo dhamaan shaqooyinka nidaamkan dashboard-ka ah. Nidaamkan waxaa loo dhisay inuu noqdo mid **Modern**, **Fast**, iyo **Backend-Ready**.
-
----
-
-## 1. 📂 Qaab-dhismeedka Nidaamka (System Architecture)
-
--   **`/lib/config.ts`**: Halkan waa meesha aad ka xukunto dhamaan magacyada, link-yada, iyo icon-ka Sidebar-ka. Waa meesha kaliya ee aad wax ka bedelayso nidaam kasta (School, Hospital, etc.).
--   **`/lib/api.ts`**: Kani waa meesha ay ku jiraan dhamaan functions-ka xogta ka keena Backend-ka. Ha ku qorin `fetch` gudaha bogagga, ee halkan ku dar si loo kantaroolo URL-ka `BASE_URL`.
--   **`/components/ui/`**: Halkan waxaa ku jira qalabka asaasiga ah ee Shadcn (Buttons, Inputs, Dialogs).
+This is an expert guide designed to help you understand all the features of this dashboard system. This system is built to be **Modern**, **Fast**, and **Backend-Ready**.
 
 ---
 
-## 2. ⚡ Qalabka Premium-ka ah (Premium Features)
+## 1. 📂 System Architecture
+
+-   **`/lib/config.ts`**: This is where you control all names, links, and sidebar icons. It is the only place you need to change for any system type (School, Hospital, etc.).
+-   **`/lib/api.ts`**: This is where all functions that fetch data from the Backend are located. Do not write `fetch` directly inside pages; add it here to centralize control via `BASE_URL`.
+-   **`/components/ui/`**: Contains the basic Shadcn UI components (Buttons, Inputs, Dialogs).
+
+---
+
+## 2. ⚡ Premium Features
 
 ### 🔍 A. Search Palette (Ctrl + K)
--   **Faylka**: `components/search-command.tsx`
--   **Shaqada**: Riix **`Ctrl + K`** si aad u furto search-ka deg-dega ah. 
--   **Sida wax loogu daro**: Haddii aad page cusub abuurto, ku dar `CommandItem` gudaha faylkaas si uu search-ka uga soo muuqdo.
+-   **File**: `components/search-command.tsx`
+-   **Function**: Press **`Ctrl + K`** to open the quick search. 
+-   **How to add**: If you create a new page, add a `CommandItem` inside this file so it appears in the search results.
 
 ### 🔔 B. Notifications (Sonner Toasts)
--   **Isticmaalka**: Waxaad meel kasta ka isticmaali kartaa `toast.success("Messege")`.
--   **Tusaale**: Marka qofka uu Login sameeyo, fariin soo dhacaysa ayaa loo dirayaa.
--   **Configuration**: Waxay ku dhex jirtaa `app/layout.tsx` (Toaster component).
+-   **Usage**: You can use `toast.success("Message")` anywhere in the app.
+-   **Example**: When a user logs in, a success notification is sent.
+-   **Configuration**: Located in `app/layout.tsx` (Toaster component).
 
 ### 🎬 C. Page Transitions (Framer Motion)
--   **Shaqada**: Bogga markii la furayo wuxuu soo galaa si tartiib ah (Fade & Slide).
--   **Kantarooolka**: Waxay ku dhex jirtaa `app/dashboard/layout.tsx` iyadoo adeegsanaysa `AnimatePresence`.
+-   **Function**: Pages enter smoothly with Fade & Slide animations.
+-   **Control**: Managed in `app/dashboard/layout.tsx` using `AnimatePresence`.
 
 ---
 
 ## 3. 💰 Finance & Data Modules
 
 ### 📈 Finance Page
--   **Faylka**: `app/dashboard/finance/page.tsx`
--   **Components**: Waxa ku jira `Progress` bars, `Charts`, iyo `Stats Cards`.
--   **Backend Integration**: Xogta halkan ka muuqata waxay si toos ah ugu xirantahay function-ka `fetchFinanceStats()` ee ku jira `lib/api.ts`.
+-   **File**: `app/dashboard/finance/page.tsx`
+-   **Components**: Includes `Progress` bars, `Charts`, and `Stats Cards`.
+-   **Backend Integration**: The data shown here is directly connected to the `fetchFinanceStats()` function in `lib/api.ts`.
 
 ### 📊 Data Tables
--   **Shaqada**: Nidaamkani wuxuu leeyahay jadwal (table) aad u casri ah oo leh `Sorting`, `Filtering`, iyo `Pagination`.
--   **Xusuus**: Xogta jadwalka waa in lagu dhex baasiraa `DataTable` component-ka.
+-   **Function**: This system features a modern data table with `Sorting`, `Filtering`, and `Pagination`.
+-   **Note**: Data for the table should be passed through the `DataTable` component.
 
 ---
 
-## 4. 🔌 Sida Backend loogu xiro (Quick Guide)
+## 4. 🔌 How to Connect Backend (Quick Guide)
 
-1.  Maaree URL-kaaga gudaha `lib/api.ts`.
-2.  Abuur function cusub (e.g. `export async function postData()`).
-3.  U wac function-kaas gudaha boggaaga (Page) adigoo isticmaalaya React hooks.
+1.  Manage your URL inside `lib/api.ts`.
+2.  Create a new function (e.g., `export async function postData()`).
+3.  Call that function inside your page using React hooks.
 
 ---
 
-## 🏗️ Industry Use-Cases (Tusaalooyin)
+## 🏗️ Industry Use-Cases (Examples)
 
 | System Type | Main Modules | Config Links |
 | :--- | :--- | :--- |
@@ -69,4 +69,4 @@ Kani waa hage heer sare ah (Expert Guide) oo loogu talagalay in lagu fahmo dhama
 
 ---
 
-### **Mahadsanid Boss! Nidaamkaan hadda waa mid aad u awood badan.** 🚀🔥✨
+### **Thank you Boss! This system is now very powerful.** 🚀🔥✨
