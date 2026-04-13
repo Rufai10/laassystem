@@ -49,6 +49,18 @@ export async function fetchLeads() {
   return await response.json();
 }
 
+// 4.1 Helista Customers
+export async function fetchCustomers() {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${BASE_URL}/leads/customers`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to fetch customers");
+  return await response.json();
+}
+
 // 5. Create Lead
 export async function createLead(leadData: any) {
   const token = localStorage.getItem("token");

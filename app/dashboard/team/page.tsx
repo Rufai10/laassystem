@@ -8,8 +8,11 @@ import { useState, useEffect } from "react"
 import { AddMemberModal } from "./AddMemberModal"
 import { fetchUsers, deleteUser } from "@/lib/api"
 import { toast } from "sonner"
+import { useUser } from "@/hooks/use-user"
 
 export default function TeamPage() {
+  const { user } = useUser()
+  const isAdmin = user?.role === "admin"
   const [members, setMembers] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -45,11 +48,13 @@ export default function TeamPage() {
   }
 
   const handleSaveMember = (updated: TeamMember) => {
+    if (!isAdmin) return toast.error("Only admins can edit team members")
     setMembers(prev => prev.map(m => m.id === updated.id ? updated : m))
     toast.info("Profile update saved (local session).")
   }
 
   const handleRemoveMember = async (id: string | number) => {
+    if (!isAdmin) return toast.error("Only admins can delete team members")
     try {
       await deleteUser(id.toString())
       setMembers(prev => prev.filter(m => m.id !== id))
@@ -76,19 +81,21 @@ export default function TeamPage() {
             Team Members
           </h1>
           <p className="text-lg text-muted-foreground">
-            Manage your architects, engineers, and sales representative team.
+            {isAdmin ? "Manage your architects, engineers, and sales representative team." : "View your team members and their status."}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button 
-            size="lg" 
-            onClick={() => setModalOpen(true)}
-            className="h-12 rounded-xl bg-primary px-6 shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
-          >
-            <UserPlus className="mr-2 size-5" />
-            Invite Member
-          </Button>
-        </div>
+        {isAdmin && (
+          <div className="flex items-center gap-3">
+            <Button 
+              size="lg" 
+              onClick={() => setModalOpen(true)}
+              className="h-12 rounded-xl bg-primary px-6 shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+            >
+              <UserPlus className="mr-2 size-5" />
+              Invite Member
+            </Button>
+          </div>
+        )}
       </motion.div>
 
       <motion.div
@@ -106,6 +113,7 @@ export default function TeamPage() {
             members={members} 
             onSave={handleSaveMember} 
             onRemove={handleRemoveMember} 
+            isAdmin={isAdmin}
           />
         )}
       </motion.div>

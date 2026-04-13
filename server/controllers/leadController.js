@@ -5,7 +5,10 @@ const { prisma } = require('../config/db');
 // @access  Private
 const getLeads = async (req, res, next) => {
   try {
-    const leads = await prisma.lead.findMany({
+    const query = {
+      where: {
+        type: "LEAD"
+      },
       include: {
         assignedTo: {
           select: {
@@ -14,8 +17,46 @@ const getLeads = async (req, res, next) => {
           },
         },
       },
-    });
+    };
+
+    // RBAC: Sales only see their own leads
+    if (req.user.role === 'sales') {
+      query.where.assignedToId = req.user.id;
+    }
+
+    const leads = await prisma.lead.findMany(query);
     res.json(leads);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get all customers
+// @route   GET /api/customers
+// @access  Private
+const getCustomers = async (req, res, next) => {
+  try {
+    const query = {
+      where: {
+        type: "CUSTOMER"
+      },
+      include: {
+        assignedTo: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+    };
+
+    // RBAC: Sales only see their own customers
+    if (req.user.role === 'sales') {
+      query.where.assignedToId = req.user.id;
+    }
+
+    const customers = await prisma.lead.findMany(query);
+    res.json(customers);
   } catch (error) {
     next(error);
   }
@@ -118,6 +159,7 @@ const deleteLead = async (req, res, next) => {
 
 module.exports = {
   getLeads,
+  getCustomers,
   getLeadById,
   createLead,
   updateLead,

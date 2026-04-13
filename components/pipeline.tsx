@@ -58,6 +58,7 @@ const COLUMNS: { id: string; title: string }[] = [
   { id: "Proposal", title: "Proposal" },
   { id: "Negotiation", title: "Negotiation" },
   { id: "Closed Won", title: "Closed Won" },
+  { id: "Closed Lost", title: "Closed Lost" },
 ]
 
 // --- Components ---

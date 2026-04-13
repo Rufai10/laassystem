@@ -7,20 +7,40 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Plus, Download } from "lucide-react"
 
+import { useUser } from "@/hooks/use-user"
+
 export default function DashboardPage() {
+  const { user } = useUser()
+  const role = user?.role || "sales"
+
   return (
     <div className="flex flex-1 flex-col gap-10 bg-background/95 px-4 py-8 md:px-8 lg:px-12">
       {/* Top Banner section */}
       <WelcomeBanner />
 
-      {/* Global Dashboard Stats */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1 }}
-      >
-        <SectionCards />
-      </motion.div>
+      {/* Global Dashboard Stats - Hidden for Sales unless adjusted */}
+      {role !== "sales" && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          <SectionCards />
+        </motion.div>
+      )}
+
+      {role === "sales" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-8 rounded-[2rem] border-2 border-primary/10 bg-primary/5">
+            <h3 className="text-xl font-bold mb-2 text-primary">Your Performance</h3>
+            <p className="text-muted-foreground">You have 5 active leads to follow up on today.</p>
+          </div>
+          <div className="p-8 rounded-[2rem] border-2 border-green-500/10 bg-green-500/5">
+            <h3 className="text-xl font-bold mb-2 text-green-600">Recent Wins</h3>
+            <p className="text-muted-foreground">You closed 2 deals this week. Great job!</p>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Row: Chart & Actions */}
       <div className="grid gap-8 lg:grid-cols-12">

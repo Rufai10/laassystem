@@ -15,11 +15,12 @@ model User {
   name        String
   email       String   @unique
   password    String
-  role        String   @default("user") // admin, manager, user
+  role        String   @default("sales") // admin, manager, sales
   status      String   @default("active") // active, away, offline
   avatar      String?
   lastActive  DateTime @default(now())
   leads       Lead[]   @relation("UserLeads")
+  deals       Deal[]   @relation("UserDeals")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -30,12 +31,29 @@ model Lead {
   email       String
   phone       String?
   company     String?
-  status      String   @default("New") // New, Contacting, Qualified, Proposal, Negotiation, Closed Won, Closed Lost
+  status      String   @default("New")
+  type        String   @default("LEAD") // LEAD, CUSTOMER
   source      String   @default("Website")
   value       Float    @default(0)
   notes       String?
   assignedTo  User?    @relation("UserLeads", fields: [assignedToId], references: [id])
   assignedToId String?
+  deals       Deal[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Deal {
+  id          String   @id @default(uuid())
+  title       String
+  amount      Float    @default(0)
+  status      String   @default("New") // New, Contacting, Qualified, Proposal, Negotiation, Closed Won, Closed Lost
+  priority    String   @default("Medium") // Low, Medium, High
+  dueDate     DateTime?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  leadId      String?
+  owner       User?    @relation("UserDeals", fields: [ownerId], references: [id])
+  ownerId     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

@@ -16,29 +16,50 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Command } from "lucide-react"
+import { useUser } from "@/hooks/use-user"
+
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // Map icons from component to ReactNode for NavMain/NavSecondary if needed,
-  // or update subcomponents to handle component props.
-  // For now, let's keep it simple and just use the config.
+  const { user } = useUser()
+  const role = user?.role || "sales"
 
-  const mainNavItems = dashboardNav.mainNav.map(item => ({
+  const filteredMainNav = dashboardNav.mainNav.filter(item => {
+    if (role === "admin") return true
+    if (role === "manager") {
+      // Manager: Dashboard, Leads, Customers, Pipeline, Team, Reports
+      return !["Finance", "Messages"].includes(item.title)
+    }
+    if (role === "sales") {
+      // Sales: Dashboard, Leads, Customers, Pipeline
+      return ["Dashboard", "Leads", "Customers", "Pipeline"].includes(item.title)
+    }
+    return false
+  })
+
+  const mainNavItems = filteredMainNav.map(item => ({
     title: item.title,
     url: item.href,
     icon: <item.icon />
   }))
 
-  // const secondaryNavItems = dashboardNav.secondaryNav.map(item => ({
-  //   title: item.title,
-  //   url: item.href,
-  //   icon: <item.icon />
-  // }))
+  const filteredSecondaryNav = dashboardNav.secondaryNav.filter(item => {
+    if (role === "admin") return true
+    if (role === "manager") {
+      // Manager: No Settings
+      return !["Settings"].includes(item.title)
+    }
+    if (role === "sales") {
+      // Sales: No secondary nav items
+      return false
+    }
+    return false
+  })
 
-  // const documentsItems = dashboardNav.documentsNav.map(item => ({
-  //   name: item.name,
-  //   url: item.url,
-  //   icon: <item.icon />
-  // }))
+  const secondaryNavItems = filteredSecondaryNav.map(item => ({
+    title: item.title,
+    url: item.href,
+    icon: <item.icon />
+  }))
 
   return (
     <Sidebar collapsible="icon" {...props} className="border-r border-zinc-200/50 dark:border-zinc-800/50">
@@ -61,8 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="gap-0">
         <NavMain items={mainNavItems} />
-        {/* <NavDocuments items={documentsItems} /> */}
-        {/* <NavSecondary items={secondaryNavItems} className="mt-auto" /> */}
+        {secondaryNavItems.length > 0 && <NavSecondary items={secondaryNavItems} className="mt-auto" />}
       </SidebarContent>
       <SidebarFooter className="border-t border-zinc-200/50 dark:border-zinc-800/50">
         <NavUser user={dashboardNav.user} />

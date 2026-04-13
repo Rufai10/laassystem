@@ -4,8 +4,14 @@ import * as React from "react"
 import { motion } from "framer-motion"
 import { Sparkles } from "lucide-react"
 
+import { useUser } from "@/hooks/use-user"
+
 export function WelcomeBanner() {
+  const { user } = useUser()
   const [time, setTime] = React.useState(new Date())
+
+  const userName = user?.name || "Member"
+  const role = user?.role || "sales"
 
   React.useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000)
@@ -18,6 +24,18 @@ export function WelcomeBanner() {
     month: "long",
     day: "numeric",
   })
+
+  const getGreeting = () => {
+    if (role === "admin") return `Welcome back, Admin ${userName}! 👋`
+    if (role === "manager") return `Hello, Manager ${userName}! 👋`
+    return `Welcome, ${userName}! 👋`
+  }
+
+  const getMessage = () => {
+    if (role === "admin") return "Everything is running smoothly. You have full control over the system."
+    if (role === "manager") return "Your team is performing well. Check the reports for the latest updates."
+    return "Focus on your leads and convert them into successful projects today."
+  }
 
   return (
     <motion.div
@@ -33,10 +51,10 @@ export function WelcomeBanner() {
           </div>
           <div className="space-y-1">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-              Sanad Wanaagsan, Admin! 👋
+              {getGreeting()}
             </h1>
             <p className="text-primary-foreground/70 text-lg font-medium max-w-md">
-              Mashaariicdaadu waxay u socdaan si habsami leh. Waxaad haysataa <span className="text-white font-bold underline decoration-white/30 underline-offset-4">12 leads</span> oo cusub oo sugaya jawaabtaada.
+              {getMessage()}
             </p>
           </div>
         </div>

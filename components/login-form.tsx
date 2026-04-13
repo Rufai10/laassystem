@@ -45,10 +45,10 @@ export function LoginForm({
       toast.error(error.message || "Failed to sign in")
       // Fallback for development if backend is not running
       if (email === "admin@laas.com") {
-         console.warn("Backend login failed. Using simulation fallback.")
-         localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
-         localStorage.setItem("user", JSON.stringify({ name: "Admin", email: "admin@laas.com" }))
-         router.push("/dashboard")
+        console.warn("Backend login failed. Using simulation fallback.")
+        localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+        localStorage.setItem("user", JSON.stringify({ name: "Admin", email: "admin@laas.com" }))
+        router.push("/dashboard")
       }
     } finally {
       setIsLoading(false)

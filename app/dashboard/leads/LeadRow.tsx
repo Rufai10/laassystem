@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { TableCell, TableRow } from "@/components/ui/table"
-import { MessageSquare, Phone, MoreHorizontal, Eye, Pencil } from "lucide-react"
+import { MessageSquare, Phone, MoreHorizontal, Eye, Pencil, CheckCircle2 } from "lucide-react"
 import { StatusBadge } from "./StatusBadge"
 import {
   DropdownMenu,
@@ -81,6 +81,9 @@ export function LeadRow({ lead }: LeadRowProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem className="rounded-lg cursor-pointer">
                 <Pencil className="mr-2 size-4" /> Edit Details
+              </DropdownMenuItem>
+              <DropdownMenuItem className="rounded-lg cursor-pointer">
+                <CheckCircle2 className="mr-2 size-4 text-green-600" /> Convert to Customer
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded-lg cursor-pointer">
                 <Phone className="mr-2 size-4" /> Call Lead

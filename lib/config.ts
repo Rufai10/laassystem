@@ -43,6 +43,11 @@ export const dashboardNav = {
       icon: Briefcase ,
     },
     {
+      title: "Customers",
+      href: "/dashboard/customers",
+      icon: Users,
+    },
+    {
       title: "Pipeline",
       href: "/dashboard/pipeline",
       icon: TrendingUp,
